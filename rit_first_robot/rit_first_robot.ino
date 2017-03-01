@@ -1,17 +1,26 @@
+#include <SoftwareServo.h>
+
 #include <SPI.h>
 #include <RH_NRF24.h>
 
-#define A_ENABLE 5
-#define A_PHASE 3
-#define B_ENABLE 6
-#define B_PHASE 4
+
 
 RH_NRF24 nrf24;
+SoftwareServo servo;
+SoftwareServo servo2;
 
 void setup() {
   Serial.begin(9600);
-  while (!Serial) 
-    ; // wait for serial port to connect. Needed for Leonardo only
+  
+  //pinMode(14, OUTPUT);
+  if (!servo.attach(14)) {
+    Serial.println("servo failure");
+  }
+  //pinMode(15, OUTPUT);
+  if (!servo2.attach(15)) {
+    Serial.println("servo2 failure");
+  }
+  
   if (!nrf24.init())
     Serial.println("init failed");
   // Defaults after init are 2.402 GHz (channel 2), 2Mbps, 0dBm
@@ -19,6 +28,8 @@ void setup() {
     Serial.println("setChannel failed");
   if (!nrf24.setRF(RH_NRF24::DataRate2Mbps, RH_NRF24::TransmitPower0dBm))
     Serial.println("setRF failed");
+
+  
   
   pinMode(A_ENABLE, OUTPUT); // A xEnable
   pinMode(A_PHASE, OUTPUT); // A xPhase
@@ -28,7 +39,7 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(nrf24.available());
+  Serial.print(nrf24.available());
   if (nrf24.available()) {
     uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
     uint8_t len = sizeof(buf);
@@ -36,16 +47,26 @@ void loop() {
       Serial.print("got request: ");
       //Serial.println((char*)buf);
 
+
+      analogWrite(A_ENABLE, buf[0]);
       Serial.print(buf[0]);
       Serial.print(", ");
       Serial.print(buf[1]);
       Serial.print(", ");
       Serial.print(buf[2]);
       Serial.print("\n");
+
+      // Send a reply
+      uint8_t data[] = "And hello back to you";
+      nrf24.send(data, sizeof(data));
+      nrf24.waitPacketSent();
+      Serial.println("Sent a reply");
     }
   }
+
+  analogWrite(A_ENABLE, 127);
   
-  delay(50);
+  delay(20);
   
   
 }
