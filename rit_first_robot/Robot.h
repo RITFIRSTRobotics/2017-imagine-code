@@ -15,6 +15,8 @@
 #define PICKUP_MIN 90
 #define PICKUP_MAX 180
 
+#define WIRELESS_DATA_LENGTH 6
+
 /**
  * Robot class definitions
  */
@@ -29,8 +31,6 @@ class Robot {
 
   public:
   Robot(uint8_t address, SoftwareServo arm_servo, SoftwareServo grip_servo);
-  uint8_t getAddress();
-  void init();
   void update_loop();
   
   
