@@ -31,6 +31,7 @@ class Robot {
 
   public:
   Robot(uint8_t address, SoftwareServo arm_servo, SoftwareServo grip_servo);
+  void init();
   void update_loop();
   
   

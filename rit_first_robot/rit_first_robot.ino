@@ -11,9 +11,10 @@ Robot bot(0xE7, arm_servo, grip_servo);
 
 void setup() {
   Serial.begin(9600);
+  bot.init();
 
-  arm_servo.attach(14);
-  grip_servo.attach(15);
+  //arm_servo.attach(14);
+  //grip_servo.attach(15);
 }
 
 void loop() {

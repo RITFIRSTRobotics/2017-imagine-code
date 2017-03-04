@@ -8,7 +8,9 @@ Robot::Robot(uint8_t _address, SoftwareServo _arm_servo, SoftwareServo _grip_ser
   arm_servo = _arm_servo;
   grip_servo = _grip_servo;
   RH_NRF24 nrf24;
+}
 
+void Robot::init() {
   // Radio initalization
   if (!nrf24.init()) {
     Serial.println("init failed");
@@ -59,13 +61,13 @@ void Robot::set_arm_pos(uint8_t arm_value, uint8_t grip_value) {
 }
 
 void Robot::update_loop() {
-  
+  Serial.print(nrf24.available());
   if (nrf24.available()) {
     uint8_t data[WIRELESS_DATA_LENGTH];
     uint8_t data_len = sizeof(data);
     if (nrf24.recv(data, &data_len)) {
       //Serial.print("got request: ");
-      //Serial.println((char*)buf);
+      Serial.println((char*)data);
 
       drive(data[0], data[1]);
 

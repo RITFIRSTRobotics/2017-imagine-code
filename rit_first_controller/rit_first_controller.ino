@@ -22,7 +22,7 @@ void setup() {
 
 void loop() {
   
-  uint8_t data[] = {(analogRead(A0) / 4), digitalRead(2), digitalRead(3)};
+  uint8_t data[] = {(analogRead(A0) / 4), 0, digitalRead(2), digitalRead(3), 0, 0};
   nrf24.send(data, sizeof(data));
 
   Serial.print("Sending: ");
@@ -33,5 +33,5 @@ void loop() {
   Serial.print(data[2]);
   Serial.print("\n");
 
-  delay();
+  delay(20);
 }
