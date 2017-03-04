@@ -22,3 +22,11 @@ Servo header were built into the board to the northwest of the Arduino. The cont
 ## Wireless
 
 There is an NRF24 header to the east of the Arduino and it is wired to the correct pins to the Arduino in the board. However, the NRF24 runs on 3.3v, while the Arduino Pro Mini runs on 5v. A voltage divider is built into the board to provide 3.3v, but it does not provide enough current to send data, only enough to receive. In order to get around this, a voltage divider was attached to the robot on the 5v bus and then connected to the NRF24.
+
+### Wireless transfer standards
+
+From the field controller, an unsigned byte array of length 6 is sent to the robot. It's contents are:
+
+1 | 2 | 3 | 4 | 5 | 6
+--|---|---|---|---|--
+left side drive (0-255, 127 center) | right side drive (0-255, 127 center) | (0-1) | (0-1) | (0-1) | (0-1)
