@@ -18,11 +18,12 @@ void setup() {
   pinMode(2, INPUT);
   pinMode(3, INPUT);
   pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
 }
 
 void loop() {
   
-  uint8_t data[] = {(analogRead(A0) / 4), 0, digitalRead(2), digitalRead(3), 0, 0};
+  uint8_t data[] = {(analogRead(A0) / 4), (analogRead(A1) / 4), digitalRead(2), digitalRead(3), 0, 0};
   nrf24.send(data, sizeof(data));
 
   Serial.print("Sending: ");

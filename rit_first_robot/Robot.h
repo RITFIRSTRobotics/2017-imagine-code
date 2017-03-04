@@ -16,6 +16,7 @@
 #define PICKUP_MAX 180
 
 #define WIRELESS_DATA_LENGTH 6
+#define WIRELESS_DATA_CENTER 127
 
 /**
  * Robot class definitions

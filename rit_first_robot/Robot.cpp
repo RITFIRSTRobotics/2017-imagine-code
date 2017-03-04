@@ -39,17 +39,27 @@ void Robot::init() {
  * 
  */
 void Robot::drive(uint8_t left_side, uint8_t right_side) {
+  // Short circuit
+  if (left_side == WIRELESS_DATA_CENTER) {
+    analogWrite(A_ENABLE, 0);
+  } else {
   // Direction on the left side
-  digitalWrite(A_PHASE, left_side > 127);
+  digitalWrite(A_PHASE, left_side < WIRELESS_DATA_CENTER);
 
   // Speed on the left side
-  analogWrite(A_ENABLE, (abs(left_side - 127)) * 2);
+  analogWrite(A_ENABLE, (abs(left_side - WIRELESS_DATA_CENTER)) * 2);
+  }
 
+  // Short circuit
+  if (right_side == WIRELESS_DATA_CENTER) {
+    analogWrite(A_ENABLE, 0);
+  } else {
   // Direction on the right side
-  digitalWrite(B_PHASE, right_side > 127);
+  digitalWrite(B_PHASE, right_side > WIRELESS_DATA_CENTER);
 
   // Speed on the right side
-  analogWrite(B_ENABLE, (abs(right_side - 127)) * 2);
+  analogWrite(B_ENABLE, (abs(right_side - WIRELESS_DATA_CENTER)) * 2);
+  }
 }
 
 /**
