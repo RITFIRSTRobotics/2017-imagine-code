@@ -4,14 +4,12 @@
 #include <RH_NRF24.h>
 
 
-
-RH_NRF24 nrf24;
 SoftwareServo servo;
 SoftwareServo servo2;
 
 void setup() {
   Serial.begin(9600);
-  
+  /*
   //pinMode(14, OUTPUT);
   if (!servo.attach(14)) {
     Serial.println("servo failure");
@@ -35,10 +33,10 @@ void setup() {
   pinMode(A_PHASE, OUTPUT); // A xPhase
   pinMode(B_ENABLE, OUTPUT); // B xEnable
   pinMode(B_PHASE, OUTPUT); // B xPhase
-
+*/
 }
 
-void loop() {
+void loop() {/*
   Serial.print(nrf24.available());
   if (nrf24.available()) {
     uint8_t buf[RH_NRF24_MAX_MESSAGE_LEN];
@@ -65,7 +63,7 @@ void loop() {
   }
 
   analogWrite(A_ENABLE, 127);
-  
+  */
   delay(20);
   
   
