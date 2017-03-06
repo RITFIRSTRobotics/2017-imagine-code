@@ -27,6 +27,6 @@ There is an NRF24 header to the east of the Arduino and it is wired to the corre
 
 From the field controller, an unsigned byte array of length 6 is sent to the robot. It's contents are:
 
-1 | 2 | 3 | 4 | 5 | 6
---|---|---|---|---|--
+| 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|
 left side drive (0-255, 127 center) | right side drive (0-255, 127 center) | (0-1) | (0-1) | (0-1) | (0-1)
