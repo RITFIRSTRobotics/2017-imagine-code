@@ -61,6 +61,19 @@ void loop() {
     int buttonB = commandArray[3];
     int buttonX = commandArray[4];
     int buttonY = commandArray[5];
+    Serial.print(STX);
+    Serial.print(leftSpeed);
+    Serial.print(RS);
+    Serial.print(rightSpeed);
+    Serial.print(RS);
+    Serial.print(buttonA);
+    Serial.print(RS);
+    Serial.print(buttonB);
+    Serial.print(RS);
+    Serial.print(buttonX);
+    Serial.print(RS);
+    Serial.print(buttonY);
+    Serial.print(ETX);
   }
   
   //If there is no data AVAILABLE at the serial port, let the LED blink
@@ -117,7 +130,7 @@ int readSerialInput(byte *commandArray) {
       index ++;
     } while (serialInByte != '#' && Serial.available() && index < 6);
     
-    if (serialInByte != '#') {
+    if (serialInByte != '#' && index < 6) {
       operationStatus = ERR_SERIAL_IN_COMMAND_NOT_TERMINATED;
     }
   } else {

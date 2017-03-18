@@ -1,0 +1,42 @@
+﻿<Window x:Class="RIT_FIRST_Serial_Csharp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RIT_FIRST_Serial_Csharp"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Column="0" HorizontalAlignment="Stretch">
+            <TextBlock Margin="10" Text=""
+                       TextWrapping="Wrap" MaxWidth="150"
+                       TextAlignment="Center"/>
+            <Button Click="sendControllerData_Click">
+                Send Controller Data
+            </Button>
+        </StackPanel>
+
+        <TabControl Name="mainTabControl" Grid.Column="1">
+            <TabItem Name="controllerTab" Header="Controller Data">
+                <DataGrid Name="controllerDataGrid" AutoGenerateColumns="False" Grid.Column="1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Data Array" Width="1*" Binding="{Binding DataArray}">
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+            <TabItem Name="arduinoTab" Header="Arduino Data">
+                <DataGrid Name="arduinoDataGrid" AutoGenerateColumns="False" Grid.Column="1">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Data Array" Width="1*" Binding="{Binding DataArray}">
+                        </DataGridTextColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
