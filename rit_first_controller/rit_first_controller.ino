@@ -4,10 +4,10 @@
 RH_NRF24 nrf24;
 
 // Address presets
-const uint8_t ROBOT_0_ADDR = '0xE7E7E7F0';
-const uint8_t ROBOT_1_ADDR = '0xE7E7E7F1';
-const uint8_t ROBOT_2_ADDR = '0xE7E7E7F2';
-const uint8_t ROBOT_3_ADDR = '0xE7E7E7F3';
+const uint8_t ROBOT_0_ADDR = (uint8_t) 0xE7E7E7F0;
+const uint8_t ROBOT_1_ADDR = (uint8_t) 0xE7E7E7F1;
+const uint8_t ROBOT_2_ADDR = (uint8_t) 0xE7E7E7F2;
+const uint8_t ROBOT_3_ADDR = (uint8_t) 0xE7E7E7F3;
 
 void setup() {
   Serial.begin(9600);
@@ -16,7 +16,7 @@ void setup() {
   if (!nrf24.init())
     Serial.println("init failed");
   // Defaults after init are 2.402 GHz (channel 2), 2Mbps, 0dBm
-  if (!nrf24.setChannel(1))
+  if (!nrf24.setChannel(2))
     Serial.println("setChannel failed");
   if (!nrf24.setRF(RH_NRF24::DataRate2Mbps, RH_NRF24::TransmitPower0dBm))
     Serial.println("setRF failed");   
@@ -29,13 +29,13 @@ void setup() {
   pinMode(A1, INPUT);         // Thumbstick X (left/right)
 
   // Loop for the specified milliseconds, waiting for address preset input
-  addressPresetLoop(5000);
+  //addressPresetLoop(5000);
 }
 
 void loop() {
 
   // read input and build data array
-  uint8_t data[] = {((analogRead(A0) - 1) / 4), ((analogRead(A1) - 8) / 4), digitalRead(2), digitalRead(3), digitalRead(4), digitalRead(5)};
+  uint8_t data[] = {((analogRead(A0)) / 4), ((analogRead(A1)) / 4), digitalRead(2), digitalRead(3), digitalRead(4), digitalRead(5)};
   nrf24.send(data, sizeof(data));   // send data to the network address
 
   // Write data to serial
@@ -96,15 +96,25 @@ Author: Gregory Goh
 ******************************************************************/
 void addressPresetLoop (unsigned long interval) {
   unsigned long previousTime = millis();  // start a timer
+  uint8_t addr = (uint8_t) 0xe7e7e7f0;
+  
 
   // keep listening for input to decide which address preset to use
   while ((millis() - previousTime) < interval) {
-    if (digitalRead(2)) nrf24.setNetworkAddress(&ROBOT_0_ADDR, 4);
-    if (digitalRead(3)) nrf24.setNetworkAddress(&ROBOT_1_ADDR ,4);
-    if (digitalRead(4)) nrf24.setNetworkAddress(&ROBOT_2_ADDR ,4);
-    if (digitalRead(5)) nrf24.setNetworkAddress(&ROBOT_3_ADDR ,4);
+    if (!digitalRead(2)) addr = ROBOT_0_ADDR;
+    if (!digitalRead(3)) addr = ROBOT_1_ADDR;
+    if (!digitalRead(4)) addr = ROBOT_2_ADDR;
+    if (!digitalRead(5)) addr = ROBOT_3_ADDR;
   }
 
+  
+  // Set address
+  nrf24.setNetworkAddress(&addr ,4);
+
   // network address defaults to 0xE7E7E7E7E7 after timeout
+  Serial.print("Address : ");
+  Serial.print(addr);
+  Serial.println();
+  
 }
 

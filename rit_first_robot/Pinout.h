@@ -6,4 +6,6 @@
 #define B_ENABLE 6
 #define B_PHASE 4
 
+#define CHANNEL_CHANGE A7
+
 #endif

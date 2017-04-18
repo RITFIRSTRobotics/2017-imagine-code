@@ -7,7 +7,7 @@
 
 SoftwareServo arm_servo;
 SoftwareServo grip_servo;
-Robot bot(0xE7, arm_servo, grip_servo);
+Robot bot(arm_servo, grip_servo);
 
 void setup() {
   Serial.begin(9600);

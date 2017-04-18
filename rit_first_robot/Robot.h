@@ -23,15 +23,16 @@
  */
 class Robot {
   private:
-  uint8_t address; // internal address of the robot
   RH_NRF24 nrf24; // Wireless module
+  uint8_t address; // Address of the wireless module
   SoftwareServo arm_servo;
   SoftwareServo grip_servo;
-  void drive(uint8_t left_side, uint8_t right_side);
+  void drive(uint8_t forward, uint8_t side);
   void set_arm_pos(uint8_t arm_value, uint8_t grip_value);
+  void increment_address();
 
   public:
-  Robot(uint8_t address, SoftwareServo arm_servo, SoftwareServo grip_servo);
+  Robot(SoftwareServo arm_servo, SoftwareServo grip_servo);
   void init();
   void update_loop();
   
