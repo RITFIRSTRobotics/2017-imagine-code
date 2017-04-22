@@ -1,5 +1,9 @@
 #include "Robot.h"
 
+static bool button_pressed(uint16_t analog_read, uint16_t previous_read) {
+  return (analog_read > HIGH_THRESHOLD) && !(previous_read > HIGH_THRESHOLD);
+}
+
 /**
  * 
  */
@@ -8,6 +12,7 @@ Robot::Robot(SoftwareServo _arm_servo, SoftwareServo _grip_servo) {
   arm_servo = _arm_servo;
   grip_servo = _grip_servo;
   RH_NRF24 nrf24;
+  previous_read = 1023;
 }
 
 void Robot::init() {
@@ -28,9 +33,12 @@ void Robot::init() {
     Serial.println("Debug info:");
     Serial.print("address: \t");
     Serial.print(address);
-  }
-*/
-  
+  }8*/
+
+  Serial.println("Error setting address");
+    Serial.println("Debug info:");
+    Serial.print("address: \t");
+    Serial.print(address);
     
   // Pin initalization
   pinMode(A_ENABLE, OUTPUT);
@@ -38,17 +46,22 @@ void Robot::init() {
   pinMode(B_ENABLE, OUTPUT);
   pinMode(B_PHASE, OUTPUT);
 
-  //pinMode(A6, INPUT_PULLUP);
+  pinMode(A6, INPUT);
 }
 
 /**
  * 
  */
 void Robot::drive(uint8_t forward, uint8_t side) {
-  
-  
   short s_forw = forward - WIRELESS_DATA_CENTER;
   short s_side = side - WIRELESS_DATA_CENTER;
+
+  // Do a deadzone check
+  if (((abs(s_forw) - DEADZONE) <= 0) && ((abs(s_side) - DEADZONE) <= 0)) {
+    analogWrite(A_ENABLE, 0);
+    analogWrite(B_ENABLE, 0);
+    return;
+  }
 
   short left_motor = 0;
   short right_motor = 0;
@@ -71,49 +84,39 @@ void Robot::drive(uint8_t forward, uint8_t side) {
       right_motor = -1 * max(-1 * s_forw, -s_side);
     }
   }
-
-  Serial.print("drive: ");
-  Serial.print(left_motor);
-  Serial.print(", ");
-  Serial.print(right_motor);
-  Serial.println();
-
-  left_motor *= -1;
-  right_motor *= -1;
-
-
+  
   // Write the motor values to the controller
   if (left_motor >= 0) {
-    digitalWrite(B_PHASE, 0);
-    if (left_motor >= 255) {
-      analogWrite(B_ENABLE, 255);
+    digitalWrite(A_PHASE, 0);
+    if (left_motor >= 128) {
+      analogWrite(A_ENABLE, 255);
     } else {
-      analogWrite(B_ENABLE, abs(left_motor * 2));
+      analogWrite(A_ENABLE, abs(left_motor * 2));
     }
   }
   else {
-    digitalWrite(B_PHASE, 1);
-    if (left_motor <= -255) {
-      analogWrite(B_ENABLE, 255);
+    digitalWrite(A_PHASE, 1);
+    if (left_motor <= -128) {
+      analogWrite(A_ENABLE, 255);
     } else {
-      analogWrite(B_ENABLE, abs(left_motor * 2));
+      analogWrite(A_ENABLE, abs(left_motor * 2));
     }
   }
 
   if (right_motor >= 0) {
-    digitalWrite(A_PHASE, 1);
-    if (right_motor >= 255) {
-      analogWrite(A_ENABLE, 255);
+    digitalWrite(B_PHASE, 1);
+    if (right_motor >= 128) {
+      analogWrite(B_ENABLE, 255);
     } else {
-      analogWrite(A_ENABLE, abs(right_motor * 2));
+      analogWrite(B_ENABLE, abs(right_motor * 2));
     }
   }
   else {
-    digitalWrite(A_PHASE, 0);
-    if (right_motor <= -255) {
-      analogWrite(A_ENABLE, 255);
+    digitalWrite(B_PHASE, 0);
+    if (right_motor <= -128) {
+      analogWrite(B_ENABLE, 255);
     } else {
-      analogWrite(A_ENABLE, abs(right_motor * 2));
+      analogWrite(B_ENABLE, abs(right_motor * 2));
     }
   }
     
@@ -153,9 +156,6 @@ void Robot::update_loop() {
     uint8_t data[WIRELESS_DATA_LENGTH];
     uint8_t data_len = sizeof(data);
     if (nrf24.recv(data, &data_len)) {
-      //Serial.print("got request: ");
-      Serial.println((char*)data);
-
       drive(data[0], data[1]);
 /*
       uint8_t arm_value = arm_servo.read();
@@ -179,6 +179,12 @@ void Robot::update_loop() {
       nrf24.waitPacketSent();      
     }
   }
+
+  uint16_t change_channel_read = analogRead(CHANNEL_PIN);
+  if (button_pressed(change_channel_read, previous_read)) {
+    Serial.println("pressed");
+  }
+  previous_read = change_channel_read;
 
   SoftwareServo::refresh();
 }

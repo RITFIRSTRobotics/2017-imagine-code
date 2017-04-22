@@ -18,6 +18,10 @@
 #define WIRELESS_DATA_LENGTH 6
 #define WIRELESS_DATA_CENTER 127
 
+#define HIGH_THRESHOLD 956
+
+#define DEADZONE 4
+
 /**
  * Robot class definitions
  */
@@ -25,6 +29,7 @@ class Robot {
   private:
   RH_NRF24 nrf24; // Wireless module
   uint8_t address; // Address of the wireless module
+  uint16_t previous_read;
   SoftwareServo arm_servo;
   SoftwareServo grip_servo;
   void drive(uint8_t forward, uint8_t side);
