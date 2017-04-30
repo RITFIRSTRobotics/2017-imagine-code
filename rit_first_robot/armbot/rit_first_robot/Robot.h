@@ -22,6 +22,15 @@
 
 #define DEADZONE 4
 
+#define ARMSPEED 6
+#define GRIPSPEED 4
+
+#define ARM_MAX 145
+#define ARM_MIN 50
+
+#define GRIP_MAX 175
+#define GRIP_MIN 130
+
 /**
  * Robot class definitions
  */
@@ -30,14 +39,13 @@ class Robot {
   RH_NRF24 nrf24; // Wireless module
   uint8_t address; // Address of the wireless module
   uint16_t previous_read;
-  SoftwareServo arm_servo;
-  SoftwareServo grip_servo;
   void drive(uint8_t forward, uint8_t side);
   void set_arm_pos(uint8_t arm_value, uint8_t grip_value);
   void increment_address();
+  void set_address(uint8_t addr_end);
 
   public:
-  Robot(SoftwareServo arm_servo, SoftwareServo grip_servo);
+  Robot();
   void init();
   void update_loop();
   
