@@ -6,6 +6,8 @@
 #define B_ENABLE 6
 #define B_PHASE 4
 
+#define LED_DIN 7
+
 #define CHANNEL_PIN A6
 #define RELAY_PIN 15
 

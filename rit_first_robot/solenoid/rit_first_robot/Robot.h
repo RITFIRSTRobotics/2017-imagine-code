@@ -4,6 +4,7 @@
 #include <SoftwareServo.h>
 #include <SPI.h>
 #include <RH_NRF24.h>
+#include <Adafruit_NeoPixel.h>
 
 #include <Arduino.h>
 
@@ -20,7 +21,7 @@
 
 #define HIGH_THRESHOLD 956
 
-#define DEADZONE 4
+#define DEADZONE 5
 
 #define ARMSPEED 8
 
@@ -39,6 +40,7 @@ class Robot {
   uint8_t address; // Address of the wireless module
   uint16_t previous_read;
   uint64_t stop_fire;  // millis() when the solenoid was fired
+  Adafruit_NeoPixel control_led;
   void drive(uint8_t forward, uint8_t side);
   void set_arm_pos(uint8_t arm_value, uint8_t grip_value);
   void increment_address();

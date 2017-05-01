@@ -1,3 +1,4 @@
+#include <Adafruit_NeoPixel.h>
 #include "Robot.h"
 
 SoftwareServo arm_servo;
@@ -14,6 +15,7 @@ Robot::Robot() {
   RH_NRF24 nrf24;
   previous_read = 1023;
   stop_fire = 0;
+  control_led = Adafruit_NeoPixel(2, LED_DIN, NEO_RGB + NEO_KHZ800);
 }
 
 void Robot::init() {
@@ -45,6 +47,11 @@ void Robot::init() {
 
   arm_servo.write(ARM_MIN + 25);
 
+  control_led.begin();
+  control_led.setPixelColor(0, control_led.Color(255, 0, 0));
+  control_led.setPixelColor(1, control_led.Color(255, 0, 0));
+  control_led.show();
+  
   SoftwareServo::refresh();
 }
 
@@ -150,7 +157,22 @@ void Robot::increment_address() {
   } else {
     address += 1;
   }
-  
+
+  if (address == 0xf0) {
+    control_led.setPixelColor(0, control_led.Color(0, 255, 0));
+    control_led.setPixelColor(1, control_led.Color(0, 255, 0));
+  } else if (address == 0xf1) {
+    control_led.setPixelColor(0, control_led.Color(0, 255, 0));
+    control_led.setPixelColor(1, control_led.Color(255, 0, 0));
+  } else if (address == 0xf2) {
+    control_led.setPixelColor(0, control_led.Color(0, 0, 255));
+    control_led.setPixelColor(1, control_led.Color(0, 255, 0));
+  } else if (address == 0xf3) {
+    control_led.setPixelColor(0, control_led.Color(0, 0, 255));
+    control_led.setPixelColor(1, control_led.Color(255, 0, 0));
+  }
+
+  control_led.show();
   set_address(address);
 }
 
