@@ -1,3 +1,4 @@
+#include <Adafruit_NeoPixel.h>
 #include "Robot.h"
 
 static bool button_pressed(uint16_t analog_read, uint16_t previous_read) {
@@ -11,6 +12,7 @@ Robot::Robot() {
   address = (uint8_t) 0xf0;
   RH_NRF24 nrf24;
   previous_read = 1023;
+  control_led = Adafruit_NeoPixel(2, LED_DIN, NEO_RGB + NEO_KHZ800);
 }
 
 void Robot::init() {
@@ -35,6 +37,11 @@ void Robot::init() {
   pinMode(B_PHASE, OUTPUT);
 
   pinMode(A6, INPUT);
+  
+  control_led.begin();
+  control_led.setPixelColor(0, control_led.Color(255, 0, 0));
+  control_led.setPixelColor(1, control_led.Color(255, 0, 0));
+  control_led.show();
 }
 
 /**
@@ -133,7 +140,22 @@ void Robot::increment_address() {
   } else {
     address += 1;
   }
-  
+
+  if (address == 0xf0) {
+    control_led.setPixelColor(0, control_led.Color(0, 255, 0));
+    control_led.setPixelColor(1, control_led.Color(0, 255, 0));
+  } else if (address == 0xf1) {
+    control_led.setPixelColor(0, control_led.Color(0, 255, 0));
+    control_led.setPixelColor(1, control_led.Color(255, 0, 0));
+  } else if (address == 0xf2) {
+    control_led.setPixelColor(0, control_led.Color(0, 0, 255));
+    control_led.setPixelColor(1, control_led.Color(0, 255, 0));
+  } else if (address == 0xf3) {
+    control_led.setPixelColor(0, control_led.Color(0, 0, 255));
+    control_led.setPixelColor(1, control_led.Color(255, 0, 0));
+  }
+
+  control_led.show();
   set_address(address);
 }
 
