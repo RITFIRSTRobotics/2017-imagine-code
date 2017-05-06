@@ -1,13 +1,20 @@
+/**
+ * rit_first_controller.ino
+ * 
+ * A controller for the robots in the RIT FIRST ImagineRIT project
+ * 
+ * @author Connor Henley, @thatging3rkid
+ * @author Gregory Goh, @ShinyTeeth
+ */
 #include <SPI.h>
 #include <RH_NRF24.h>
 
-RH_NRF24 nrf24;
+#define BUTTON_TOP    2
+#define BUTTON_LEFT   3
+#define BUTTON_BOTTOM 4
+#define BUTTON_RIGHT  5
 
-// Address presets
-const uint8_t ROBOT_0_ADDR = (uint8_t) 0xE7E7E7F0;
-const uint8_t ROBOT_1_ADDR = (uint8_t) 0xE7E7E7F1;
-const uint8_t ROBOT_2_ADDR = (uint8_t) 0xE7E7E7F2;
-const uint8_t ROBOT_3_ADDR = (uint8_t) 0xE7E7E7F3;
+RH_NRF24 nrf24;
 
 void setup() {
   Serial.begin(9600);
@@ -21,15 +28,18 @@ void setup() {
   if (!nrf24.setRF(RH_NRF24::DataRate2Mbps, RH_NRF24::TransmitPower0dBm))
     Serial.println("setRF failed");   
 
-  pinMode(2, INPUT_PULLUP);   // Left Button
-  pinMode(3, INPUT_PULLUP);   // Up Button
-  pinMode(4, INPUT_PULLUP);   // Right Button
-  pinMode(5, INPUT_PULLUP);   // Down Button
+  // Button initalization
+  pinMode(BUTTON_TOP, INPUT_PULLUP);
+  pinMode(BUTTON_LEFT, INPUT_PULLUP);
+  pinMode(BUTTON_BOTTOM, INPUT_PULLUP);
+  pinMode(BUTTON_RIGHT, INPUT_PULLUP);
+
+  // Thumbstick initalization
   pinMode(A0, INPUT);         // Thumbstick Y (front/back)
   pinMode(A1, INPUT);         // Thumbstick X (left/right)
 
   // Loop for the specified milliseconds, waiting for address preset input
-  //addressPresetLoop(5000);
+  addressPresetLoop(5000);
 }
 
 void loop() {
@@ -51,9 +61,6 @@ void loop() {
   Serial.print(data[4]);
   Serial.print(" ");
   Serial.print(data[5]);
-  Serial.print(" ");
-  Serial.print(data[6]);
-  Serial.print(" ");
   Serial.print("\n");
   
 
@@ -82,39 +89,32 @@ void loop() {
   delay(20);
 }
 
-/*****************************************************************
-Description:
-This method starts a loop that listens for button input that
-decides what network address preset to use. 
-Uses default network address upon timeout.
- 
-Parameters:
-  interval -> the time in milliseconds to loop and wait for input
-
-Author: Gregory Goh
-
-******************************************************************/
+/**
+ * This method starts a loop that listens for button input that
+ * decides what network address preset to use. 
+ * Uses default network address upon timeout.
+ * 
+ * @param interval the time in milliseconds to loop and wait for input
+ */
 void addressPresetLoop (unsigned long interval) {
   unsigned long previousTime = millis();  // start a timer
-  uint8_t addr = (uint8_t) 0xe7e7e7f0;
+  uint8_t addr_end = (uint8_t) 0xf0;
   
-
   // keep listening for input to decide which address preset to use
   while ((millis() - previousTime) < interval) {
-    if (!digitalRead(2)) addr = ROBOT_0_ADDR;
-    if (!digitalRead(3)) addr = ROBOT_1_ADDR;
-    if (!digitalRead(4)) addr = ROBOT_2_ADDR;
-    if (!digitalRead(5)) addr = ROBOT_3_ADDR;
+    if (!digitalRead(BUTTON_TOP))    addr_end = (uint8_t) 0xf0;
+    if (!digitalRead(BUTTON_LEFT))   addr_end = (uint8_t) 0xf1;
+    if (!digitalRead(BUTTON_BOTTOM)) addr_end = (uint8_t) 0xf2;
+    if (!digitalRead(BUTTON_RIGHT))  addr_end = (uint8_t) 0xf3;
   }
 
-  
-  // Set address
-  nrf24.setNetworkAddress(&addr ,4);
+  uint8_t * address = malloc(sizeof(uint8_t) * 4);
+  address[0] = (uint8_t) 0xe7;
+  address[1] = (uint8_t) 0xe7;
+  address[2] = (uint8_t) 0xe7;
+  address[3] = addr_end;  
 
-  // network address defaults to 0xE7E7E7E7E7 after timeout
-  Serial.print("Address : ");
-  Serial.print(addr);
-  Serial.println();
-  
+  // Set address
+  nrf24.setNetworkAddress(address ,4);  
 }
 
